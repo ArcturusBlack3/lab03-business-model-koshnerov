@@ -1,14 +1,20 @@
 package by.bseu.pp.lab03.model;
 
-/**
- * One line of an order: a product and its quantity.
- */
+
 public class OrderItem {
     private final Product product;
     private final int quantity;
 
     public OrderItem(Product product, int quantity) {
-        // TODO: validate constructor arguments
+        
+        if(product==null){
+            throw new IllegalArgumentException("NULL");
+        }
+
+        if(quantity<=0){
+            throw new IllegalArgumentException("quantity НЕ МОЖЕТ БЫТЬ НЕПОЛОЖИТЕЛЬНЫМ");
+        }
+
         this.product = product;
         this.quantity = quantity;
     }
@@ -22,7 +28,6 @@ public class OrderItem {
     }
 
     public double getAmount() {
-        // TODO: delegate the calculation to Product
-        throw new UnsupportedOperationException("TODO");
+        return product.calculateAmount(quantity);
     }
 }

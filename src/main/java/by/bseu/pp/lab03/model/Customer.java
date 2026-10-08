@@ -1,10 +1,6 @@
 package by.bseu.pp.lab03.model;
 
-/**
- * Represents a customer of the enterprise.
- *
- * <p>Complete all TODO parts without changing the public API of the class.</p>
- */
+
 public class Customer {
     private final String code;
     private String name;
@@ -12,7 +8,19 @@ public class Customer {
     private double creditLimit;
 
     public Customer(String code, String name, double creditLimit) {
-        // TODO: validate constructor arguments
+
+        if(code==null || code.isBlank()){
+            throw new IllegalArgumentException("code НЕ МОЖЕТ БЫТЬ ПУСТЫМ ИЛИ СОДЕРЖАТЬ ТОЛЬКО ПРОБЕЛЫ");
+        }
+
+        if(name==null || name.isBlank()){
+            throw new IllegalArgumentException("name НЕ МОЖЕТ БЫТЬ ПУСТЫМ ИЛИ СОДЕРЖАТЬ ТОЛЬКО ПРОБЕЛЫ");
+        }
+
+        if(creditLimit<0.0){
+            throw new IllegalArgumentException("creditLimit НЕ МОЖЕТ БЫТЬ ОТРИЦАТЕЛЬНЫМ");
+        }
+
         this.code = code;
         this.name = name;
         this.creditLimit = creditLimit;
@@ -36,27 +44,38 @@ public class Customer {
     }
 
     public void rename(String newName) {
-        // TODO: validate and change the customer name
-        throw new UnsupportedOperationException("TODO");
+        
+        if(newName==null || newName.isBlank()){
+            throw new IllegalArgumentException("newName НЕ МОЖЕТ БЫТЬ ПУСТЫМ ИЛИ СОДЕРЖАТЬ ТОЛЬКО ПРОБЕЛЫ");
+        }
+        this.name=newName;
     }
 
     public void changeCreditLimit(double newCreditLimit) {
-        // TODO: validate and change the credit limit
-        throw new UnsupportedOperationException("TODO");
+        
+        if(newCreditLimit<0.0){
+            throw new IllegalArgumentException("newCreditLimit НЕ МОЖЕТ БЫТЬ ОТРИЦАТЕЛЬНЫМ");
+        }
+
+        this.creditLimit=newCreditLimit;
     }
 
     public void activate() {
-        // TODO: activate the customer
-        throw new UnsupportedOperationException("TODO");
+        
+        this.active=true;
     }
 
     public void deactivate() {
-        // TODO: deactivate the customer
-        throw new UnsupportedOperationException("TODO");
+        
+        this.active=false;
     }
 
     public boolean canPlaceOrder(double orderTotal) {
-        // TODO: return true only for an active customer whose order fits the credit limit
-        throw new UnsupportedOperationException("TODO");
+        
+        if(orderTotal<0.0){
+            throw new IllegalArgumentException("orderTotal НЕ МОЖЕТ БЫТЬ ОТРИЦАТЕЛЬНЫМ");
+        }
+
+        return active && orderTotal<=creditLimit;
     }
 }

@@ -3,9 +3,7 @@ package by.bseu.pp.lab03.model;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Represents an order and protects the allowed order state transitions.
- */
+
 public class Order {
     private final Customer customer;
     private final List<OrderItem> items;
@@ -13,7 +11,11 @@ public class Order {
     private Payment payment;
 
     public Order(Customer customer) {
-        // TODO: validate customer
+        
+        if(customer==null){
+            throw new IllegalArgumentException("NULL");
+        }
+
         this.customer = customer;
         this.items = new ArrayList<>();
         this.status = OrderStatus.CREATED;
@@ -36,32 +38,85 @@ public class Order {
     }
 
     public void addItem(Product product, int quantity) {
-        // TODO: items may be added only while the order is CREATED
-        throw new UnsupportedOperationException("TODO");
+        
+        if(status!=OrderStatus.CREATED){
+            throw new IllegalStateException("staus НЕ CREATED");
+        }
+
+        OrderItem item= new OrderItem(product, quantity);
+
+        items.add(item);
+
     }
 
     public double total() {
-        // TODO: sum amounts of all order items
-        throw new UnsupportedOperationException("TODO");
+        double summ=0.0;
+        for(OrderItem item : items){
+            summ+=item.getAmount();
+        }
+
+        return  summ;
+
     }
 
     public void confirm() {
-        // TODO: confirm a non-empty CREATED order for an active customer within the credit limit
-        throw new UnsupportedOperationException("TODO");
+        
+        if(status!=OrderStatus.CREATED){
+            throw new IllegalStateException("status HE CREATED");
+        }
+
+        if(items.isEmpty()){
+            throw new IllegalStateException("В ЗАКАЗЕ НЕТ НИ ОДНОЙ ПОЗИЦИИ");
+        }
+
+        if(!customer.isActive()){
+            throw new IllegalStateException("КЛИЕНТ НЕАКТИВЕН");
+        }
+
+        if(total()>customer.getCreditLimit()){
+            throw new IllegalStateException("ОБЩАЯ СУММА ЗАКАЗА ПРЕВЫШАЕТ CreditLimit");
+        }
+
+        this.status=OrderStatus.CONFIRMED;
+
     }
 
     public void cancel() {
-        // TODO: allow cancellation only before payment
-        throw new UnsupportedOperationException("TODO");
+        
+        if(status==OrderStatus.PAID || status==OrderStatus.CANCELLED){
+            throw new IllegalStateException("Отменить можно заказ в состоянии CREATED или CONFIRMED");
+        }
+
+        this.status=OrderStatus.CANCELLED;
+
     }
 
     public void pay(Payment payment) {
-        // TODO: accept only a successful payment for the exact total of a CONFIRMED order
-        throw new UnsupportedOperationException("TODO");
+        
+        if(status!=OrderStatus.CONFIRMED){
+            throw new IllegalStateException("Оплата разрешена только для CONFIRMED-заказа");
+        }
+
+        if(payment==null){
+            throw new IllegalArgumentException("NULL");
+        }
+
+        if(!payment.isSuccessful()){
+            throw new IllegalStateException("Платёж не имеет статус SUCCESSFUL");
+        }
+
+        if(payment.getAmount()!=total()){
+            throw new IllegalArgumentException("Сумма платежа не соответствует total() заказа");
+        }
+
+        this.payment=payment;
+        this.status=OrderStatus.PAID;
+
     }
 
     public boolean isPaid() {
-        // TODO: return true only for PAID order
-        throw new UnsupportedOperationException("TODO");
+        
+        return status==OrderStatus.PAID;
+
     }
 }
